@@ -7,7 +7,7 @@ const auth = getAuth(app);
 
 const LoginBootstrap = () => {
     const [success, setSuccess] = useState(false);
-
+    const [userEmail, setUserEmail] = useState('');
     const  handleSubmit =event =>{
         event.preventDefault();
         setSuccess(false);
@@ -27,12 +27,25 @@ const LoginBootstrap = () => {
         .catch(error => {
             console.error('error', error)
         })
+    }
 
-
-
+    const handleEmailBlur = event=>{
+        const email = event.target.value;
+        setUserEmail(email);
+        console.log(email);
     }
     const handleForgetPassword =()=>{
-        sendPasswordResetEmail(auth)
+        if(!userEmail){
+            alert('please enter your email address.')
+            return;
+        }
+        sendPasswordResetEmail(auth,userEmail)
+        .then(()=>{
+            alert('Password Reset email sent. Please check your email.')
+        })
+        .catch(error => {
+            console.error(error);
+        })
     }
 
 
@@ -45,7 +58,7 @@ const LoginBootstrap = () => {
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="formGroupExampleInput" className="form-label">Your Email</label>
-                    <input type="email" name='email' className="form-control" id="formGroupExampleInput" placeholder="Your Email" required />
+                    <input onBlur={handleEmailBlur} type="email" name='email' className="form-control" id="formGroupExampleInput" placeholder="Your Email" required />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="formGroupExampleInput2" className="form-label">Your Password</label>
